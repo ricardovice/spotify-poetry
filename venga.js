@@ -1,11 +1,14 @@
 var vengaSpotifyURL = 'http://ws.spotify.com/search/1/track.json?q=';
 
-function vengaBuscarUno(vengaTitulo, cb) {
+function vengaBuscarUno(vengaTitulo, cb, page) {
+  if (!page) page = 1;
   vengaTitulo = vengaTitulo.toLowerCase();
-
-  var vengaBusca = encodeURIComponent('title:"' + vengaTitulo + '"');
+  var vengaBusca = encodeURIComponent('title:"' + vengaTitulo + '"') + '&page=' + page;
   $.get(vengaSpotifyURL + vengaBusca, function(data) {
-    console.log(data)
+    if (!data.tracks.length) {
+      cb(false);
+      return;
+    }
     for (var i = 0; i < data.tracks.length; i++) {
       var track = data.tracks[i];
       if (track.name.toLowerCase() == vengaTitulo) {
@@ -13,24 +16,29 @@ function vengaBuscarUno(vengaTitulo, cb) {
         return;
       }
     }
-    cb(false);
+    vengaBuscarUno(vengaTitulo, cb, page+1)
   });
 }
 
 function vengaBuscar(vengaFrase, cb) {
+  var vengaTracks = []
   var vengaPalabras = vengaFrase.split(' ');
   // TODO: join palabras
-  vengaBuscarUno(vengaFrase, function(track) {
-    if (track) {
-      // TODO: Instead of calling callback here, add track to a list and look up remaining words
-      //     (if all words have been looked up, THEN call the callback!)
-      console.log("HOLA TIO")
-      cb([track]);
-    } else {
-      // TODO: Instead of failing here, try a new query with fewer words
-      cb(false);
-    }
-  });
+  var vengaTitulos = vengaPalabras;
+  for (var i = 0; i < vengaTitulos.length; i++) {
+    vengaBuscarUno(vengaTitulos[i], function(track) {
+      if (track) {
+        // TODO: Instead of calling callback here, add track to a list and look up remaining words
+        //     (if all words have been looked up, THEN call the callback!)
+        vengaTracks.push(track);
+        if (vengaTracks.length == vengaTitulos.length) {
+          cb(vengaTracks);
+        }
+      } else {
+        console.log('FAIL');
+      }
+    });
+  }
 }
 
 var vengaIframe;
