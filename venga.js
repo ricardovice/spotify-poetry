@@ -21,23 +21,25 @@ function vengaBuscarUno(vengaTitulo, cb, page) {
 }
 
 function vengaBuscar(vengaFrase, cb) {
-  var vengaTracks = []
+  var vengaTracks = [];
   var vengaPalabras = vengaFrase.split(' ');
   // TODO: join palabras
   var vengaTitulos = vengaPalabras;
+  var pending = 0;
   for (var i = 0; i < vengaTitulos.length; i++) {
-    vengaBuscarUno(vengaTitulos[i], function(track) {
-      if (track) {
-        // TODO: Instead of calling callback here, add track to a list and look up remaining words
-        //     (if all words have been looked up, THEN call the callback!)
-        vengaTracks.push(track);
-        if (vengaTracks.length == vengaTitulos.length) {
-          cb(vengaTracks);
+    pending++;
+    vengaBuscarUno(vengaTitulos[i], function(i) {
+      return function(track) {
+        if (track) {
+          vengaTracks[i] = track;
+          if (!--pending) {
+            cb(vengaTracks);
+          }
+        } else {
+          console.log('FAIL');
         }
-      } else {
-        console.log('FAIL');
-      }
-    });
+      };
+    }(i));
   }
 }
 
