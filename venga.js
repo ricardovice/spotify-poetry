@@ -68,7 +68,7 @@ $(function() {
           frameborder: '0',
           allowtransparency: 'true'
         });
-        $(document.body).append(vengaIframe);
+        $('#venga-spotify').append(vengaIframe);
       }
     });
   });
