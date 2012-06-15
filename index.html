@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                    $('#venga-button').click(function () {
+                        var vengaFrase = $('#venga-frase').val().toLowerCase();
+                        var vengaPalabras = vengaFrase.split(' ');
+                        
+                        var vengaSpotifyURL = 'http://ws.spotify.com/search/1/track.json?q=';
+                        var vengaTitulo = vengaFrase
+                        var vengaBusca = encodeURIComponent('title:"' + vengaTitulo + '"')
+                        $.get(vengaSpotifyURL + vengaBusca, function(data) {
+                            //$('.result').html(data);
+                            console.log(data);
+                            for (var i=0; i<data.tracks.length; i=i+1)
+                            {
+                                var track = data.tracks[i]
+                                if(track.name.toLowerCase() == vengaTitulo)
+                                {
+                                    alert('WIN');
+                                    console.log(data.tracks[i]);
+                                    break;
+                                }
+                            }
+                        });
+                    });
+                    var vengaTracks = ['2gqGPuOW5gUcpOm6Vt03S7', '0SY8oIKugUoToaPujEfghp'];
+                    var vengaIframe = $('#venga-musica');
+                    var vengaUrl = 'https://embed.spotify.com/?uri=spotify:trackset::' + vengaTracks.join(',')
+                    vengaIframe.attr('src', vengaUrl);
+                    });
+        </script>
+    </head>
+    <body>
+        <input id="venga-frase"/>
+        <button id="venga-button">Venga Musica!</button>
+        <br/>
+        <iframe id="venga-musica" src="" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+    </body>
+</html>
