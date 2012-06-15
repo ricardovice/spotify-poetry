@@ -72,4 +72,8 @@ $(function() {
       }
     });
   });
+  $('#venga-dont').click(function() {
+    location.href = 'spotify:track:0FutrWIUM5Mg3434asiwkp';
+  });
 });
+
